@@ -598,7 +598,7 @@ Profiles are keyed by KDE Activity id:
       "apps": [
         {
           "name": "Browser",
-          "desktopEntry": "firefox.desktop",
+          "desktopEntry": "firefox",
           "class": "firefox",
           "zone": 1
         }
@@ -608,11 +608,12 @@ Profiles are keyed by KDE Activity id:
 }
 ```
 
-`zone` is one-based for readability. `desktopEntry` is opened through the
-system application launcher; `class` is the KWin window class used to detect
-existing windows and snap newly opened windows. `launchMode: "prompt"` shows an
-OSD reminder when switching to an activity with missing apps. Silent automatic
-launch is intentionally not enabled yet.
+`zone` is one-based for readability. `desktopEntry` is the application id used
+by the system launcher, usually the desktop file basename without `.desktop`
+such as `firefox` or `org.kde.kate`; `class` is the KWin window class used to
+detect existing windows and snap newly opened windows. `launchMode: "prompt"`
+shows an OSD reminder when switching to an activity with missing apps. Silent
+automatic launch is intentionally not enabled yet.
 
 ## Shortcuts
 
