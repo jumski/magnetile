@@ -481,7 +481,7 @@ Item {
         if (!query)
             return false;
 
-        dbusCall.exec("org.kde.krunner", "/App", "query", [query], "org.kde.krunner.App");
+        dbusCall.exec("org.kde.krunner", "/App", "query", [query]);
         Utils.osd("Open " + appLabel(app) + " from KRunner");
         return true;
     }
@@ -3147,10 +3147,9 @@ Item {
     DBusCall {
         id: dbusCall
 
-        function exec(service, path, method, arguments = [], dbusInterface = "") {
+        function exec(service, path, method, arguments = []) {
             this.service = service;
             this.path = path;
-            this.dbusInterface = dbusInterface;
             this.method = method;
             this.arguments = arguments;
             this.call();
