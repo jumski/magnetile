@@ -504,13 +504,13 @@ Item {
             return 0;
         }
 
-        const missing = missingProfileApps(profile, activity);
-        if (missing.length === 0) {
-            Utils.osd("Activity profile apps are already open");
+        const apps = profileApps(profile);
+        if (apps.length === 0) {
+            Utils.osd("Activity profile has no apps");
             return 0;
         }
 
-        const opened = openProfileApp(missing[0]);
+        const opened = openProfileApp(apps[0]);
         return opened ? 1 : 0;
     }
 
