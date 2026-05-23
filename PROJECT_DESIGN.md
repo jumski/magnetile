@@ -149,12 +149,11 @@ or persist activity placements across KWin restarts.
 
 Activity launcher profiles are stored separately in `activityProfilesJson`.
 Profiles are keyed by KDE Activity id and can list apps by display name,
-KRunner query/command, window class, and one-based target zone. The initial
-launcher implementation does not silently execute arbitrary commands from KWin.
-Instead, the manual profile shortcut opens KRunner for the first missing app,
-and the normal `windowAdded` path snaps matching windows to their profile zones
-when they appear. This keeps app spawning user-visible until a reliable
-auto-launch backend is available.
+desktop entry id, window class, and one-based target zone. The initial launcher
+implementation does not execute arbitrary shell commands from KWin. Instead,
+the manual profile shortcut opens the first missing app through Qt's external
+URL launcher using an `applications:` URL, and the normal `windowAdded` path
+snaps matching windows to their profile zones when they appear.
 
 Monitor identity uses KWin output names (`output.name`). Geometry does not rely
 on output order or an origin of `x=0, y=0`; snapping uses

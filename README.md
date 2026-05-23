@@ -583,11 +583,10 @@ runtime placement state across KWin restarts.
 
 #### Activity Launcher Profiles
 
-Activity profiles can list apps that belong to a KDE Activity. The first
-launcher implementation is intentionally user-visible: assign a shortcut to
-**Magnetile: Launch current activity profile**, and Magnetile opens KRunner for
-the first missing app in the current profile. When a matching window appears,
-Magnetile snaps it to the configured zone.
+Activity profiles can list apps that belong to a KDE Activity. Assign a
+shortcut to **Magnetile: Launch current activity profile**, and Magnetile opens
+the first missing app in the current profile from its desktop entry. When a
+matching window appears, Magnetile snaps it to the configured zone.
 
 Profiles are keyed by KDE Activity id:
 
@@ -599,7 +598,7 @@ Profiles are keyed by KDE Activity id:
       "apps": [
         {
           "name": "Browser",
-          "command": "firefox",
+          "desktopEntry": "firefox.desktop",
           "class": "firefox",
           "zone": 1
         }
@@ -609,11 +608,11 @@ Profiles are keyed by KDE Activity id:
 }
 ```
 
-`zone` is one-based for readability. `command` is sent to KRunner; `class`
-is the KWin window class used to detect existing windows and snap newly opened
-windows. `launchMode: "prompt"` shows an OSD reminder when switching to an
-activity with missing apps. Silent automatic launch is intentionally not enabled
-until Magnetile has a reliable Plasma 6 launch backend.
+`zone` is one-based for readability. `desktopEntry` is opened through the
+system application launcher; `class` is the KWin window class used to detect
+existing windows and snap newly opened windows. `launchMode: "prompt"` shows an
+OSD reminder when switching to an activity with missing apps. Silent automatic
+launch is intentionally not enabled yet.
 
 ## Shortcuts
 

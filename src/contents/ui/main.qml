@@ -414,6 +414,16 @@ Item {
         return app && app.class !== undefined && app.class !== null ? app.class.toString() : "";
     }
 
+    function appDesktopEntry(app) {
+        if (!app)
+            return "";
+
+        if (app.desktopEntry !== undefined && app.desktopEntry !== null && app.desktopEntry !== "")
+            return app.desktopEntry.toString();
+
+        return "";
+    }
+
     function appLaunchQuery(app) {
         if (!app)
             return "";
@@ -431,7 +441,7 @@ Item {
     }
 
     function appLabel(app) {
-        return app && app.name ? app.name.toString() : (appLaunchQuery(app) || appResourceClass(app) || "app");
+        return app && app.name ? app.name.toString() : (appLaunchQuery(app) || appDesktopEntry(app) || appResourceClass(app) || "app");
     }
 
     function appZoneIndex(app) {
@@ -476,18 +486,14 @@ Item {
         return missing;
     }
 
-    function openKRunnerForApp(app) {
-        const query = appLaunchQuery(app);
-        if (!query)
-            return false;
-
-        try {
-            KWin.callDBus("org.kde.krunner", "/App", "org.kde.krunner.App", "query", query);
-        } catch (error) {
-            console.error("Magnetile: KRunner DBus launch failed: " + error);
+    function openProfileApp(app) {
+        const desktopEntry = appDesktopEntry(app);
+        if (!desktopEntry) {
+            console.error("Magnetile: Activity profile app requires desktopEntry for launching: " + appLabel(app));
             return false;
         }
-        return true;
+
+        return Qt.openUrlExternally("applications:" + desktopEntry);
     }
 
     function launchCurrentActivityProfile() {
@@ -504,7 +510,7 @@ Item {
             return 0;
         }
 
-        const opened = openKRunnerForApp(missing[0]);
+        const opened = openProfileApp(missing[0]);
         return opened ? 1 : 0;
     }
 

@@ -12,8 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Optional active-layout tracking per KDE Activity.
 - Activity-scoped window placement restore for existing windows when activity
   layout tracking is enabled.
-- Activity launcher profiles with a manual shortcut that opens KRunner for
-  missing profile apps and snaps matching windows when they appear.
+- Activity launcher profiles with a manual shortcut that opens missing profile
+  apps from desktop entries and snaps matching windows when they appear.
 
 ## [0.2.3] - 2026-05-09
 
