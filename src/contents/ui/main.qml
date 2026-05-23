@@ -482,7 +482,6 @@ Item {
             return false;
 
         dbusCall.exec("org.kde.krunner", "/App", "query", [query]);
-        Utils.osd("Open " + appLabel(app) + " from KRunner");
         return true;
     }
 
@@ -501,9 +500,6 @@ Item {
         }
 
         const opened = openKRunnerForApp(missing[0]);
-        if (opened && missing.length > 1)
-            Utils.osd("Open " + appLabel(missing[0]) + " from KRunner (" + missing.length + " missing)");
-
         return opened ? 1 : 0;
     }
 
