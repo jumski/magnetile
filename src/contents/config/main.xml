@@ -54,6 +54,10 @@
             <default>false</default>
         </entry>
 
+        <entry name="trackLayoutPerActivity" type="Bool">
+            <default>false</default>
+        </entry>
+
         <entry name="autoSnapAllNew" type="Bool">
             <default>false</default>
         </entry>

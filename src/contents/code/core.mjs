@@ -76,6 +76,7 @@ export function loadConfig() {
   config.trackLayoutPerScreen = KWin.readConfig("trackLayoutPerScreen", false);
   config.monitorLayouts = monitorLayouts;
   config.trackLayoutPerDesktop = KWin.readConfig("trackLayoutPerDesktop", false);
+  config.trackLayoutPerActivity = KWin.readConfig("trackLayoutPerActivity", false);
   config.showOsdMessages = KWin.readConfig("showOsdMessages", true);
   config.fadeWindowsWhileMoving = KWin.readConfig("fadeWindowsWhileMoving", false);
   config.autoSnapAllNew = KWin.readConfig("autoSnapAllNew", false);

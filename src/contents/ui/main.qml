@@ -240,6 +240,7 @@ Item {
             "resizing": resizing,
             "oldGeometry": Workspace.activeWindow && Workspace.activeWindow.oldGeometry,
             "activeScreen": activeScreen && activeScreen.name,
+            "currentActivity": Workspace.currentActivity,
             "currentLayout": currentLayout,
             "screenLayouts": screenLayouts,
             "resize": resizeDebugInfo
@@ -1681,11 +1682,14 @@ Item {
         if (config.trackLayoutPerDesktop)
             parts.push(Workspace.currentDesktop.id);
 
+        if (config.trackLayoutPerActivity)
+            parts.push(Workspace.currentActivity || "");
+
         return parts.join(':');
     }
 
     function getCurrentLayout() {
-        if (config.trackLayoutPerScreen || config.trackLayoutPerDesktop) {
+        if (config.trackLayoutPerScreen || config.trackLayoutPerDesktop || config.trackLayoutPerActivity) {
             const key = getLayoutKey();
             if (screenLayouts[key] === undefined)
                 screenLayouts[key] = config.trackLayoutPerScreen ? configuredLayoutForOutput(activeScreen || Workspace.activeScreen) : 0;
@@ -1696,7 +1700,7 @@ Item {
     }
 
     function setCurrentLayout(layout) {
-        if (config.trackLayoutPerScreen || config.trackLayoutPerDesktop)
+        if (config.trackLayoutPerScreen || config.trackLayoutPerDesktop || config.trackLayoutPerActivity)
             screenLayouts[getLayoutKey()] = clampLayoutIndex(layout);
 
         currentLayout = clampLayoutIndex(layout);
@@ -1710,6 +1714,9 @@ Item {
 
         if (config.trackLayoutPerDesktop)
             parts.push(Workspace.currentDesktop.name);
+
+        if (config.trackLayoutPerActivity)
+            parts.push(Workspace.currentActivity || "activity");
 
         if (parts.length > 0)
             return `${name} (${parts.join(' / ')})`;
@@ -2884,6 +2891,15 @@ Item {
                 return;
 
             if (config.trackLayoutPerDesktop)
+                currentLayout = getCurrentLayout();
+
+        }
+
+        function onCurrentActivityChanged() {
+            if (disposing)
+                return;
+
+            if (config.trackLayoutPerActivity)
                 currentLayout = getCurrentLayout();
 
         }

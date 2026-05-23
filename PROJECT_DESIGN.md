@@ -135,7 +135,9 @@ defaults. If no valid mapping exists, landscape outputs prefer `Priority Grid`
 and portrait outputs prefer `Horizontal Split` when those layouts exist. After
 seeding, runtime layout switching is tracked
 independently in memory for that output, and optionally for that virtual desktop
-when `trackLayoutPerDesktop` is also enabled.
+when `trackLayoutPerDesktop` is also enabled. When
+`trackLayoutPerActivity` is enabled, the active KDE Activity id is also part of
+the runtime layout key, so each activity can remember its own active layout.
 
 Monitor identity uses KWin output names (`output.name`). Geometry does not rely
 on output order or an origin of `x=0, y=0`; snapping uses

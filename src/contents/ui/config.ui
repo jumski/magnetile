@@ -337,6 +337,13 @@
                       </widget>
                     </item>
                     <item>
+                      <widget class="QCheckBox" name="kcfg_trackLayoutPerActivity">
+                        <property name="text">
+                          <string>Track active layout per activity</string>
+                        </property>
+                      </widget>
+                    </item>
+                    <item>
                       <widget class="QCheckBox" name="kcfg_autoSnapAllNew">
                         <property name="text">
                           <string>Automatically snap all new windows</string>

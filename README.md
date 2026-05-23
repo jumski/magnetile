@@ -572,6 +572,13 @@ Enable script logging or show the runtime debug overlay. The debug overlay is
 useful for finding a window's resource class for filters or application-based
 zone rules.
 
+#### Activity Layout Tracking
+
+Enable **Track active layout per activity** to remember the selected layout
+separately for each KDE Activity. This only scopes the active layout selection;
+shared windows still keep a single Magnetile zone assignment until
+activity-scoped window placement is added.
+
 ## Shortcuts
 
 List of all available shortcuts:
