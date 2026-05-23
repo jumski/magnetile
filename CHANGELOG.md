@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Optional active-layout tracking per KDE Activity.
+- Activity-scoped window placement restore for existing windows when activity
+  layout tracking is enabled.
 
 ## [0.2.3] - 2026-05-09
 

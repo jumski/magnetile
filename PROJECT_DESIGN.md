@@ -139,6 +139,14 @@ when `trackLayoutPerDesktop` is also enabled. When
 `trackLayoutPerActivity` is enabled, the active KDE Activity id is also part of
 the runtime layout key, so each activity can remember its own active layout.
 
+When activity layout tracking is enabled, each client also keeps an in-memory
+`magnetileActivityPlacements` map keyed by output, virtual desktop, and KDE
+Activity id. Magnetile updates that map when it tiles, frees, resets, or
+connected-resizes a window. On `Workspace.currentActivityChanged`, visible
+windows belonging to the new activity are restored from the matching placement
+entry. This is intentionally runtime state only; Magnetile does not launch apps
+or persist activity placements across KWin restarts.
+
 Monitor identity uses KWin output names (`output.name`). Geometry does not rely
 on output order or an origin of `x=0, y=0`; snapping uses
 `Workspace.clientArea(KWin.FullScreenArea, output, desktop)` plus percentage

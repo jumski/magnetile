@@ -575,9 +575,11 @@ zone rules.
 #### Activity Layout Tracking
 
 Enable **Track active layout per activity** to remember the selected layout
-separately for each KDE Activity. This only scopes the active layout selection;
-shared windows still keep a single Magnetile zone assignment until
-activity-scoped window placement is added.
+separately for each KDE Activity. Existing windows can also keep separate
+runtime placements per activity after they are moved or resized in each
+activity. Magnetile restores those remembered placements when switching
+activities, but it does not launch activity-specific apps or persist this
+runtime placement state across KWin restarts.
 
 ## Shortcuts
 

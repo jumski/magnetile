@@ -188,6 +188,21 @@ Item {
         return client && client.activity !== undefined ? client.activity : Workspace.currentActivity;
     }
 
+    function clientActivities(client) {
+        if (client && client.activities !== undefined)
+            return client.activities;
+
+        return [];
+    }
+
+    function clientOnActivity(client, activity) {
+        const activities = clientActivities(client);
+        if (!activity || !isArrayValue(activities) || activities.length === 0)
+            return true;
+
+        return activities.indexOf(activity) !== -1;
+    }
+
     function clientDebugName(client) {
         if (!client)
             return "<none>";
@@ -271,7 +286,118 @@ Item {
     }
 
     function clientInCurrentScope(client, output, desktop, activity) {
-        return clientOutput(client) === output && sameDesktop(client, desktop) && clientActivity(client) === activity;
+        return clientOutput(client) === output && sameDesktop(client, desktop) &&
+            (config.trackLayoutPerActivity ? clientOnActivity(client, activity) : clientActivity(client) === activity);
+    }
+
+    function placementScopeKey(client, screen, desktop, activity) {
+        const resolvedScreen = screen || clientOutput(client);
+        const resolvedDesktop = desktop || Workspace.currentDesktop;
+        const parts = [
+            outputName(resolvedScreen),
+            resolvedDesktop && resolvedDesktop.id ? resolvedDesktop.id : "",
+            activity !== undefined && activity !== null ? activity : ""
+        ];
+        return parts.join(":");
+    }
+
+    function scopedClientPlacements(client) {
+        if (!client)
+            return {};
+
+        const placements = client.magnetileActivityPlacements;
+        if (placements && !isArrayValue(placements) && typeof placements === "object")
+            return placements;
+
+        return {};
+    }
+
+    function saveScopedClientPlacement(client) {
+        if (!config.trackLayoutPerActivity || !client)
+            return;
+
+        const key = placementScopeKey(client, clientOutput(client), Workspace.currentDesktop, Workspace.currentActivity);
+        const placements = scopedClientPlacements(client);
+        const layout = validLayoutIndex(client.layout) ? clampLayoutIndex(client.layout) : currentLayout;
+        placements[key] = {
+            "zone": validZoneIndex(layout, client.zone) ? Math.round(Number(client.zone)) : -1,
+            "zones": normalizeZoneList(layout, client.zones),
+            "layout": layout,
+            "mergedZone": client.magnetileMergedZone || "",
+            "resetZone": validZoneIndex(layout, client.magnetileResetZone) ? Math.round(Number(client.magnetileResetZone)) : -1,
+            "freeMove": client.magnetileFreeMove === true,
+            "tiled": client.magnetileTiled === true,
+            "geometry": {
+                "x": client.frameGeometry.x,
+                "y": client.frameGeometry.y,
+                "width": client.frameGeometry.width,
+                "height": client.frameGeometry.height
+            }
+        };
+        client.magnetileActivityPlacements = Object.assign({}, placements);
+    }
+
+    function restoreScopedClientPlacement(client, activity) {
+        if (!config.trackLayoutPerActivity || !client || !canMutateWindowGeometry(client))
+            return false;
+
+        if (!clientOnActivity(client, activity) || !sameDesktop(client, Workspace.currentDesktop))
+            return false;
+
+        const key = placementScopeKey(client, clientOutput(client), Workspace.currentDesktop, activity);
+        const placement = scopedClientPlacements(client)[key];
+        if (!placement || !validLayoutIndex(placement.layout))
+            return false;
+
+        const layout = clampLayoutIndex(placement.layout);
+        const zones = normalizeZoneList(layout, placement.zones !== undefined ? placement.zones : placement.zone);
+        const zone = zones.length > 0 ? zones[0] : (validZoneIndex(layout, placement.zone) ? Math.round(Number(placement.zone)) : -1);
+        let geometry = null;
+
+        if (placement.freeMove) {
+            geometry = rectFromStoredGeometry(placement.geometry);
+        } else if (zones.length > 1) {
+            geometry = resizeLogicalGeometry(layout, zones, clientOutput(client));
+        } else if (validZoneIndex(layout, zone)) {
+            geometry = targetGeometry(effectiveTargetForZone(layout, zone, clientOutput(client), Workspace.currentDesktop, activity));
+        }
+
+        if (!geometry)
+            return false;
+
+        client.layout = layout;
+        client.zone = zone;
+        client.zones = zones.length > 0 ? zones : (validZoneIndex(layout, zone) ? [zone] : []);
+        client.magnetileMergedZone = placement.mergedZone || (zones.length > 1 ? mergeIdForZones(zones) : "");
+        client.magnetileResetZone = validZoneIndex(layout, placement.resetZone) ? Math.round(Number(placement.resetZone)) : -1;
+        client.desktop = Workspace.currentDesktop;
+        client.activity = activity;
+        client.magnetileFreeMove = placement.freeMove === true;
+        client.magnetileTiled = placement.tiled === true && !placement.freeMove;
+        client.magnetileResizeSnapshot = null;
+
+        if (!rectsClose(client.frameGeometry, geometry)) {
+            client.setMaximize(false, false);
+            client.frameGeometry = geometry;
+        }
+        return true;
+    }
+
+    function restoreScopedPlacementsForActivity(activity) {
+        if (!config.trackLayoutPerActivity)
+            return 0;
+
+        let count = 0;
+        for (let i = 0; i < Workspace.stackingOrder.length; i++) {
+            const client = Workspace.stackingOrder[i];
+            if (!checkFilter(client) || client.minimized)
+                continue;
+
+            if (restoreScopedClientPlacement(client, activity))
+                count++;
+        }
+        Utils.log("Restored " + count + " activity-scoped placements for " + (activity || "<activity>"));
+        return count;
     }
 
     function recoverClientZone(client, layout, fallbackToClosest) {
@@ -1090,6 +1216,7 @@ Item {
             client.magnetileTiled = true;
             client.magnetileResizeSnapshot = null;
             clearClientTargetProperties(client);
+            saveScopedClientPlacement(client);
             count++;
         }
 
@@ -1352,6 +1479,7 @@ Item {
         client.magnetileFreeMove = false;
         client.setMaximize(false, false);
         client.frameGeometry = geometry;
+        saveScopedClientPlacement(client);
     }
 
     function freeClient(client) {
@@ -1366,6 +1494,7 @@ Item {
         client.magnetileTiled = false;
         client.magnetileResizeSnapshot = null;
         clearClientTargetProperties(client);
+        saveScopedClientPlacement(client);
     }
 
     function toggleFreeClient(client) {
@@ -1409,6 +1538,8 @@ Item {
             client.zones = [zone];
             client.magnetileMergedZone = "";
         }
+        if (zone === -1)
+            saveScopedClientPlacement(client);
     }
 
     function saveClientTargetProperties(client, target) {
@@ -1457,6 +1588,7 @@ Item {
             client.setMaximize(false, false);
             client.frameGeometry = geometry;
             client.magnetileResizeSnapshot = null;
+            saveScopedClientPlacement(client);
         }
     }
 
@@ -2181,6 +2313,10 @@ Item {
 
         restoreResizeTargetProperties(client, snapshot, snapshot);
         updateRuntimeLayoutGeometry(snapshot, client.frameGeometry);
+        saveScopedClientPlacement(client);
+        for (let i = 0; i < snapshot.windows.length; i++)
+            saveScopedClientPlacement(snapshot.windows[i].client);
+
         resizeDebugInfo.lastApplied = applied;
         resizeDebugInfo = Object.assign({}, resizeDebugInfo);
         return applied;
@@ -2901,6 +3037,8 @@ Item {
 
             if (config.trackLayoutPerActivity)
                 currentLayout = getCurrentLayout();
+
+            restoreScopedPlacementsForActivity(Workspace.currentActivity);
 
         }
 
