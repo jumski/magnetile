@@ -481,7 +481,12 @@ Item {
         if (!query)
             return false;
 
-        krunnerCall.exec("org.kde.krunner", "/App", "org.kde.krunner.App", "query", [query]);
+        try {
+            KWin.callDBus("org.kde.krunner", "/App", "org.kde.krunner.App", "query", query);
+        } catch (error) {
+            console.error("Magnetile: KRunner DBus launch failed: " + error);
+            return false;
+        }
         return true;
     }
 
@@ -3153,23 +3158,6 @@ Item {
 
         Component.onCompleted: {
             Core.registerQMLComponent("dbusCall", dbusCall);
-        }
-    }
-
-    DBusCall {
-        id: krunnerCall
-
-        function exec(service, path, dbusInterface, method, arguments = []) {
-            this.service = service;
-            this.path = path;
-            this.dbusInterface = dbusInterface;
-            this.method = method;
-            this.arguments = arguments;
-            this.call();
-        }
-
-        onFailed: {
-            console.error("Magnetile: KRunner DBus launch failed");
         }
     }
 
