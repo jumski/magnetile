@@ -581,6 +581,40 @@ activity. Magnetile restores those remembered placements when switching
 activities, but it does not launch activity-specific apps or persist this
 runtime placement state across KWin restarts.
 
+#### Activity Launcher Profiles
+
+Activity profiles can list apps that belong to a KDE Activity. The first
+launcher implementation is intentionally user-visible: assign a shortcut to
+**Magnetile: Launch current activity profile**, and Magnetile opens KRunner for
+the first missing app in the current profile. When a matching window appears,
+Magnetile snaps it to the configured zone.
+
+Profiles are keyed by KDE Activity id:
+
+```json
+{
+  "activities": {
+    "ee8f04ee-0bb1-486f-89fd-cf31a2b31fbb": {
+      "launchMode": "manual",
+      "apps": [
+        {
+          "name": "Browser",
+          "command": "firefox",
+          "class": "firefox",
+          "zone": 1
+        }
+      ]
+    }
+  }
+}
+```
+
+`zone` is one-based for readability. `command` is sent to KRunner; `class`
+is the KWin window class used to detect existing windows and snap newly opened
+windows. `launchMode: "prompt"` shows an OSD reminder when switching to an
+activity with missing apps. Silent automatic launch is intentionally not enabled
+until Magnetile has a reliable Plasma 6 launch backend.
+
 ## Shortcuts
 
 List of all available shortcuts:
@@ -604,6 +638,7 @@ List of all available shortcuts:
 | Move active window right                           | <kbd>Meta</kbd> + <kbd>Right</kbd>                                  |
 | Snap all windows                                   | <kbd>Meta</kbd> + <kbd>Space</kbd>                                  |
 | Snap active window                                 | <kbd>Meta</kbd> + <kbd>Shift</kbd> + <kbd>Space</kbd>               |
+| Launch current activity profile                    | Unbound                                                             |
 
 *To change the default bindings, go to `System Settings / Shortcuts` and search for Magnetile*
 

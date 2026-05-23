@@ -256,6 +256,7 @@ Item {
             "oldGeometry": Workspace.activeWindow && Workspace.activeWindow.oldGeometry,
             "activeScreen": activeScreen && activeScreen.name,
             "currentActivity": Workspace.currentActivity,
+            "activityProfiles": config.activityProfiles,
             "currentLayout": currentLayout,
             "screenLayouts": screenLayouts,
             "resize": resizeDebugInfo
@@ -398,6 +399,142 @@ Item {
         }
         Utils.log("Restored " + count + " activity-scoped placements for " + (activity || "<activity>"));
         return count;
+    }
+
+    function activityProfile(activity) {
+        const profiles = config.activityProfiles && config.activityProfiles.activities ? config.activityProfiles.activities : {};
+        return profiles[activity || Workspace.currentActivity] || null;
+    }
+
+    function profileApps(profile) {
+        return profile && isArrayValue(profile.apps) ? profile.apps : [];
+    }
+
+    function appResourceClass(app) {
+        return app && app.class !== undefined && app.class !== null ? app.class.toString() : "";
+    }
+
+    function appLaunchQuery(app) {
+        if (!app)
+            return "";
+
+        if (app.query !== undefined && app.query !== null && app.query !== "")
+            return app.query.toString();
+
+        if (app.command !== undefined && app.command !== null && app.command !== "")
+            return app.command.toString();
+
+        if (app.name !== undefined && app.name !== null)
+            return app.name.toString();
+
+        return "";
+    }
+
+    function appLabel(app) {
+        return app && app.name ? app.name.toString() : (appLaunchQuery(app) || appResourceClass(app) || "app");
+    }
+
+    function appZoneIndex(app) {
+        if (!app || app.zone === undefined || app.zone === null)
+            return -1;
+
+        const zone = Math.round(Number(app.zone)) - 1;
+        return validZoneIndex(currentLayout, zone) ? zone : -1;
+    }
+
+    function clientMatchesProfileApp(client, app, activity) {
+        const resourceClass = appResourceClass(app);
+        if (!resourceClass || clientResourceClass(client) !== resourceClass)
+            return false;
+
+        return clientOnActivity(client, activity || Workspace.currentActivity) && sameDesktop(client, Workspace.currentDesktop);
+    }
+
+    function profileAppExists(app, activity) {
+        for (let i = 0; i < Workspace.stackingOrder.length; i++) {
+            const client = Workspace.stackingOrder[i];
+            if (!client || client.minimized)
+                continue;
+
+            if (clientMatchesProfileApp(client, app, activity))
+                return true;
+        }
+        return false;
+    }
+
+    function missingProfileApps(profile, activity) {
+        const missing = [];
+        const apps = profileApps(profile);
+        for (let i = 0; i < apps.length; i++) {
+            const app = apps[i];
+            if (!appResourceClass(app))
+                continue;
+
+            if (!profileAppExists(app, activity))
+                missing.push(app);
+        }
+        return missing;
+    }
+
+    function openKRunnerForApp(app) {
+        const query = appLaunchQuery(app);
+        if (!query)
+            return false;
+
+        dbusCall.exec("org.kde.krunner", "/App", "query", [query], "org.kde.krunner.App");
+        Utils.osd("Open " + appLabel(app) + " from KRunner");
+        return true;
+    }
+
+    function launchCurrentActivityProfile() {
+        const activity = Workspace.currentActivity;
+        const profile = activityProfile(activity);
+        if (!profile) {
+            Utils.osd("No Magnetile activity profile for current activity");
+            return 0;
+        }
+
+        const missing = missingProfileApps(profile, activity);
+        if (missing.length === 0) {
+            Utils.osd("Activity profile apps are already open");
+            return 0;
+        }
+
+        const opened = openKRunnerForApp(missing[0]);
+        if (opened && missing.length > 1)
+            Utils.osd("Open " + appLabel(missing[0]) + " from KRunner (" + missing.length + " missing)");
+
+        return opened ? 1 : 0;
+    }
+
+    function handleActivityProfilePrompt(activity) {
+        const profile = activityProfile(activity);
+        if (!profile || profile.launchMode !== "prompt")
+            return;
+
+        const missing = missingProfileApps(profile, activity);
+        if (missing.length > 0)
+            Utils.osd("Activity profile has " + missing.length + " missing app" + (missing.length === 1 ? "" : "s") + "; use launch shortcut");
+    }
+
+    function snapProfileWindow(client) {
+        const profile = activityProfile(Workspace.currentActivity);
+        if (!profile || !checkFilter(client))
+            return false;
+
+        const apps = profileApps(profile);
+        for (let i = 0; i < apps.length; i++) {
+            const app = apps[i];
+            if (!clientMatchesProfileApp(client, app, Workspace.currentActivity))
+                continue;
+
+            const zone = appZoneIndex(app);
+            if (zone !== -1) {
+                moveClientToZone(client, zone);
+                return true;
+            }
+        }
+        return false;
     }
 
     function recoverClientZone(client, layout, fallbackToClosest) {
@@ -3002,14 +3139,18 @@ Item {
         onResetCurrentLayout: {
             resetCurrentLayoutGeometry();
         }
+        onLaunchCurrentActivityProfile: {
+            launchCurrentActivityProfile();
+        }
     }
 
     DBusCall {
         id: dbusCall
 
-        function exec(service, path, method, arguments = []) {
+        function exec(service, path, method, arguments = [], dbusInterface = "") {
             this.service = service;
             this.path = path;
+            this.dbusInterface = dbusInterface;
             this.method = method;
             this.arguments = arguments;
             this.call();
@@ -3039,6 +3180,7 @@ Item {
                 currentLayout = getCurrentLayout();
 
             restoreScopedPlacementsForActivity(Workspace.currentActivity);
+            handleActivityProfilePrompt(Workspace.currentActivity);
 
         }
 
@@ -3069,6 +3211,9 @@ Item {
 
             // check if client is in a zone application list
             const resourceClass = clientResourceClass(client);
+            if (snapProfileWindow(client))
+                return;
+
             config.layouts[currentLayout].zones.forEach((zone, zoneIndex) => {
                 if (zone.applications && zone.applications.includes(resourceClass)) {
                     moveClientToZone(client, zoneIndex);

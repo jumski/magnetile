@@ -64,6 +64,19 @@ export function loadConfig() {
     monitorLayouts = {};
   }
 
+  let activityProfiles;
+  try {
+    activityProfiles = JSON.parse(KWin.readConfig("activityProfilesJson", "{}"));
+  } catch (e) {
+    activityProfiles = {};
+  }
+  if (!activityProfiles || Array.isArray(activityProfiles) || typeof activityProfiles !== "object") {
+    activityProfiles = {};
+  }
+  if (!activityProfiles.activities || Array.isArray(activityProfiles.activities) || typeof activityProfiles.activities !== "object") {
+    activityProfiles.activities = {};
+  }
+
   config.enableZoneSelector = KWin.readConfig("enableZoneSelector", true);
   config.zoneSelectorTriggerDistance = KWin.readConfig("zoneSelectorTriggerDistance", 1);
   config.enableZoneOverlay = KWin.readConfig("enableZoneOverlay", true);
@@ -77,6 +90,7 @@ export function loadConfig() {
   config.monitorLayouts = monitorLayouts;
   config.trackLayoutPerDesktop = KWin.readConfig("trackLayoutPerDesktop", false);
   config.trackLayoutPerActivity = KWin.readConfig("trackLayoutPerActivity", false);
+  config.activityProfiles = activityProfiles;
   config.showOsdMessages = KWin.readConfig("showOsdMessages", true);
   config.fadeWindowsWhileMoving = KWin.readConfig("fadeWindowsWhileMoving", false);
   config.autoSnapAllNew = KWin.readConfig("autoSnapAllNew", false);
