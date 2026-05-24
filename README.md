@@ -23,15 +23,17 @@ The editor can import your current Magnetile layout JSON, edit zones visually,
 configure custom edge-snap triggers, and export JSON for Magnetile, KZones, or
 PlasmaZones.
 
-## What's New In 0.2.0
+## What's New In 0.3.0
 
-Magnetile 0.2.0 adds runtime merged zones. While dragging a window, drop near
-the shared edge between adjacent zones to snap across both zones instead of
-choosing only one. Magnetile highlights the larger merged target before release,
-then keeps the merged area active until the layout is reset with `Ctrl+Alt+R`.
+Magnetile 0.3.0 adds KDE Activity-aware layouts. If you enable activity
+tracking, each Activity can keep its own active layout on each monitor, so a
+work Activity can use a different layout than a gaming, writing, or homelab
+Activity without manually switching layouts every time.
 
-Existing tiled windows in the affected zones expand to the same merged target,
-so a newly merged area does not leave older windows hidden underneath.
+Existing windows can also keep separate Magnetile placements per Activity while
+KWin moves them in and out of view. This makes Activity switching behave more
+like switching between complete workspace setups instead of only changing which
+windows are visible.
 
 Development of the Magnetile-specific changes is AI-assisted. Human review,
 testing, packaging, and licensing responsibility remain with the Magnetile
