@@ -21,7 +21,6 @@ Item {
     signal snapAllWindows()
     signal freeActiveWindow()
     signal resetCurrentLayout()
-    signal launchCurrentActivityProfile()
 
     ShortcutHandler {
         name: "Magnetile: Cycle layouts"
@@ -198,15 +197,6 @@ Item {
         sequence: "Ctrl+Alt+R"
         onActivated: {
             resetCurrentLayout();
-        }
-    }
-
-    ShortcutHandler {
-        name: "Magnetile: Launch current activity profile"
-        text: "Magnetile: Launch current activity profile"
-        sequence: ""
-        onActivated: {
-            launchCurrentActivityProfile();
         }
     }
 

@@ -7,13 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-05-23
+
 ### Added
 
 - Optional active-layout tracking per KDE Activity.
 - Activity-scoped window placement restore for existing windows when activity
   layout tracking is enabled.
-- Activity launcher profiles with a manual shortcut that opens missing profile
-  apps from desktop entries and snaps matching windows when they appear.
+- Activity placement profiles that snap newly opened matching windows to
+  configured zones for the current KDE Activity.
+
+### Changed
+
+- Activity profiles no longer launch applications from inside the KWin script.
+  Use KDE application shortcuts, launchers, or an external helper to start apps;
+  Magnetile handles detection and placement when the windows appear.
+
+### Fixed
+
+- Activity-scoped placement restore now uses the window's actual KWin output
+  instead of falling back to the active output during activity switches.
 
 ## [0.2.3] - 2026-05-09
 

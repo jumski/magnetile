@@ -25,8 +25,17 @@ Behavior confirmed by user:
 
 One bug remains to investigate later:
 
-- A window on the side monitor using the `Horizontal Split` layout can move to
-  the top zone after switching activities.
+- A window on the side monitor using the `Horizontal Split` layout could move
+  to the top zone after switching activities.
+- Mitigation added on `issue-12-activity-launcher`: activity-scoped placement
+  save/restore now requires the window's actual KWin output (`client.output` or
+  `client.screen`) and no longer falls back to `Workspace.activeScreen`. This
+  avoids restoring a side-monitor placement against the wrong output while KWin
+  is swapping activities.
+- Verified after reload/restart that KWin loads the script without Magnetile
+  `RangeError`, `ReferenceError`, or `TypeError`. Programmatic activity switch
+  from Default to Activity A and back to Default completed with no filtered KWin
+  errors.
 
 ## Launcher Work Current State
 
@@ -59,11 +68,39 @@ Observed failure:
 
 Conclusion so far:
 
-- Launching apps directly from inside the KWin script is probably the wrong
-  boundary on this Plasma 6 setup.
-- Magnetile should likely own activity profile config and placement detection,
-  while actual app launch should be handled by KDE app shortcuts or a small
-  external helper.
+- Launching apps directly from inside the KWin script is the wrong boundary on
+  this Plasma 6 setup.
+- Magnetile now owns activity profile config and placement detection, while
+  actual app launch is delegated to KDE app shortcuts or a small external helper.
+- The manual Magnetile launcher shortcut registration was removed. Even after
+  removing `Qt.openUrlExternally`, invoking that KWin shortcut still caused
+  `RangeError: Maximum call stack size exceeded`.
+
+External shortcut test result:
+
+- Invoking KDE's Ghostty `_launch` global shortcut through KGlobalAccel started
+  Ghostty via systemd at `2026-05-23T19:17:27-04:00`.
+- No Magnetile `RangeError`, `ReferenceError`, or `TypeError` appeared in KWin
+  logs for that launch.
+- Re-tested after removing the Magnetile launcher shortcut and restarting KWin
+  at `2026-05-23T19:24:15-04:00`; Ghostty again launched externally and KWin
+  logs stayed free of Magnetile JS errors.
+- Ghostty exited quickly on this machine, so the snap could not be visually
+  confirmed from that run. The Magnetile placement path still watches
+  `windowAdded` and matches class `com.mitchellh.ghostty` to zone 2.
+- User later confirmed Ghostty stayed up in zone 2.
+
+## Deferred Work
+
+- Capture/editor and auto-learn profile experiments were abandoned for this
+  release.
+- KWin scripting did not expose `KWin.writeConfig` on this setup, so Magnetile
+  cannot persist learned activity profile rules from inside the script.
+- App launching from inside the KWin script remains out of scope because every
+  attempted backend caused `RangeError: Maximum call stack size exceeded`.
+- If automatic profile capture or profile launching is revisited later, use an
+  external helper/writer boundary instead of direct KWin-side persistence or app
+  launch APIs.
 
 ## Local Test Config
 
@@ -94,7 +131,8 @@ Current `activityProfilesJson` test config in `kwinrc`:
 
 Current shortcut test setup:
 
-- `Ctrl+Alt+L` was removed from `Magnetile: Launch current activity profile`.
+- `Ctrl+Alt+L` was removed from the deleted
+  `Magnetile: Launch current activity profile` action.
 - `Ctrl+Alt+L` was bound to KDE's `Ghostty` application launch action:
   `['com.mitchellh.ghostty.desktop', '_launch', 'Ghostty', 'Ghostty']`.
 
@@ -127,7 +165,6 @@ qdbus6 --literal org.kde.ActivityManager /ActivityManager/Activities ListActivit
 Check launcher test bindings:
 
 ```sh
-gdbus call --session --dest org.kde.kglobalaccel --object-path /kglobalaccel --method org.kde.KGlobalAccel.shortcut "['kwin','Magnetile: Launch current activity profile','KWin','Magnetile: Launch current activity profile']"
 gdbus call --session --dest org.kde.kglobalaccel --object-path /kglobalaccel --method org.kde.KGlobalAccel.shortcut "['com.mitchellh.ghostty.desktop','_launch','Ghostty','Ghostty']"
 ```
 
@@ -147,18 +184,15 @@ tools/reload-clean.sh --restart
 
 1. Do not keep trying more direct launch APIs from KWin until there is a clear
    reason. It has repeatedly caused stack overflow.
-2. Test whether the current external-app-shortcut approach works:
+2. Manually verify the current external-app-shortcut approach with a persistent
+   app window:
    - close Ghostty,
    - press `Ctrl+Alt+L`,
    - verify Ghostty opens,
    - verify Magnetile snaps it to zone 2.
-3. If external-app-shortcut launch plus Magnetile placement works, refocus the
-   feature as:
-   - activity profiles define expected apps and zones,
-   - Magnetile places matching windows,
-   - launching is delegated to KDE shortcuts or an optional helper.
-4. If a true "launch current profile" command is still desired, implement a
+3. If a true "launch current profile" command is still desired, implement a
    small external helper/service and have Magnetile call only that helper, or
    document a KDE shortcut-based setup.
-5. After launcher direction is settled, investigate the side-monitor
-   `Horizontal Split` activity-switch placement bug.
+4. Manually re-test the side-monitor `Horizontal Split` activity-switch case
+   with a real window on the portrait output to confirm the actual-output
+   placement restore fix.

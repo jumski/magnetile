@@ -53,6 +53,10 @@ Item {
         return client && (client.output || client.screen || Workspace.activeScreen);
     }
 
+    function actualClientOutput(client) {
+        return client && (client.output || client.screen) ? (client.output || client.screen) : null;
+    }
+
     function outputName(screen) {
         return screen && screen.name ? screen.name : "";
     }
@@ -317,7 +321,11 @@ Item {
         if (!config.trackLayoutPerActivity || !client)
             return;
 
-        const key = placementScopeKey(client, clientOutput(client), Workspace.currentDesktop, Workspace.currentActivity);
+        const output = actualClientOutput(client);
+        if (!output)
+            return;
+
+        const key = placementScopeKey(client, output, Workspace.currentDesktop, Workspace.currentActivity);
         const placements = scopedClientPlacements(client);
         const layout = validLayoutIndex(client.layout) ? clampLayoutIndex(client.layout) : currentLayout;
         placements[key] = {
@@ -339,13 +347,17 @@ Item {
     }
 
     function restoreScopedClientPlacement(client, activity) {
-        if (!config.trackLayoutPerActivity || !client || !canMutateWindowGeometry(client))
+        if (!config.trackLayoutPerActivity || !client || disposing || outputsSettling)
             return false;
 
         if (!clientOnActivity(client, activity) || !sameDesktop(client, Workspace.currentDesktop))
             return false;
 
-        const key = placementScopeKey(client, clientOutput(client), Workspace.currentDesktop, activity);
+        const output = actualClientOutput(client);
+        if (!output || !workspaceGeometryReady(output))
+            return false;
+
+        const key = placementScopeKey(client, output, Workspace.currentDesktop, activity);
         const placement = scopedClientPlacements(client)[key];
         if (!placement || !validLayoutIndex(placement.layout))
             return false;
@@ -358,9 +370,9 @@ Item {
         if (placement.freeMove) {
             geometry = rectFromStoredGeometry(placement.geometry);
         } else if (zones.length > 1) {
-            geometry = resizeLogicalGeometry(layout, zones, clientOutput(client));
+            geometry = resizeLogicalGeometry(layout, zones, output);
         } else if (validZoneIndex(layout, zone)) {
-            geometry = targetGeometry(effectiveTargetForZone(layout, zone, clientOutput(client), Workspace.currentDesktop, activity));
+            geometry = targetGeometry(effectiveTargetForZone(layout, zone, output, Workspace.currentDesktop, activity));
         }
 
         if (!geometry)
@@ -486,34 +498,6 @@ Item {
         return missing;
     }
 
-    function openProfileApp(app) {
-        const desktopEntry = appDesktopEntry(app);
-        if (!desktopEntry) {
-            console.error("Magnetile: Activity profile app requires desktopEntry for launching: " + appLabel(app));
-            return false;
-        }
-
-        return Qt.openUrlExternally("applications:" + desktopEntry);
-    }
-
-    function launchCurrentActivityProfile() {
-        const activity = Workspace.currentActivity;
-        const profile = activityProfile(activity);
-        if (!profile) {
-            Utils.osd("No Magnetile activity profile for current activity");
-            return 0;
-        }
-
-        const apps = profileApps(profile);
-        if (apps.length === 0) {
-            Utils.osd("Activity profile has no apps");
-            return 0;
-        }
-
-        const opened = openProfileApp(apps[0]);
-        return opened ? 1 : 0;
-    }
-
     function handleActivityProfilePrompt(activity) {
         const profile = activityProfile(activity);
         if (!profile || profile.launchMode !== "prompt")
@@ -521,7 +505,7 @@ Item {
 
         const missing = missingProfileApps(profile, activity);
         if (missing.length > 0)
-            Utils.osd("Activity profile has " + missing.length + " missing app" + (missing.length === 1 ? "" : "s") + "; use launch shortcut");
+            Utils.osd("Activity profile has " + missing.length + " missing app" + (missing.length === 1 ? "" : "s") + "; use KDE app shortcuts");
     }
 
     function snapProfileWindow(client) {
@@ -3145,9 +3129,6 @@ Item {
         }
         onResetCurrentLayout: {
             resetCurrentLayoutGeometry();
-        }
-        onLaunchCurrentActivityProfile: {
-            launchCurrentActivityProfile();
         }
     }
 

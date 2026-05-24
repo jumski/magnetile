@@ -581,12 +581,12 @@ activity. Magnetile restores those remembered placements when switching
 activities, but it does not launch activity-specific apps or persist this
 runtime placement state across KWin restarts.
 
-#### Activity Launcher Profiles
+#### Activity Placement Profiles
 
-Activity profiles can list apps that belong to a KDE Activity. Assign a
-shortcut to **Magnetile: Launch current activity profile**, and Magnetile opens
-the first missing app in the current profile from its desktop entry. When a
-matching window appears, Magnetile snaps it to the configured zone.
+Activity profiles can list apps that belong to a KDE Activity. Magnetile does
+not launch those apps from inside KWin; use KDE application shortcuts, launchers,
+or an external helper to start them. When a matching window appears, Magnetile
+snaps it to the configured zone.
 
 Profiles are keyed by KDE Activity id:
 
@@ -608,12 +608,11 @@ Profiles are keyed by KDE Activity id:
 }
 ```
 
-`zone` is one-based for readability. `desktopEntry` is the application id used
-by the system launcher, usually the desktop file basename without `.desktop`
-such as `firefox` or `org.kde.kate`; `class` is the KWin window class used to
-detect existing windows and snap newly opened windows. `launchMode: "prompt"`
-shows an OSD reminder when switching to an activity with missing apps. Silent
-automatic launch is intentionally not enabled yet.
+`zone` is one-based for readability. `class` is the KWin window class used to
+detect existing windows and snap newly opened windows. `desktopEntry` is optional
+metadata for the matching KDE application shortcut or external helper.
+`launchMode: "prompt"` shows an OSD reminder when switching to an activity with
+missing apps. Silent automatic launch is intentionally not enabled.
 
 ## Shortcuts
 
@@ -638,7 +637,6 @@ List of all available shortcuts:
 | Move active window right                           | <kbd>Meta</kbd> + <kbd>Right</kbd>                                  |
 | Snap all windows                                   | <kbd>Meta</kbd> + <kbd>Space</kbd>                                  |
 | Snap active window                                 | <kbd>Meta</kbd> + <kbd>Shift</kbd> + <kbd>Space</kbd>               |
-| Launch current activity profile                    | Unbound                                                             |
 
 *To change the default bindings, go to `System Settings / Shortcuts` and search for Magnetile*
 

@@ -147,15 +147,12 @@ windows belonging to the new activity are restored from the matching placement
 entry. This is intentionally runtime state only; Magnetile does not launch apps
 or persist activity placements across KWin restarts.
 
-Activity launcher profiles are stored separately in `activityProfilesJson`.
+Activity placement profiles are stored separately in `activityProfilesJson`.
 Profiles are keyed by KDE Activity id and can list apps by display name,
-desktop entry id, window class, and one-based target zone. `desktopEntry` uses
-the launcher id form accepted by `applications:` URLs, normally the desktop file
-basename without `.desktop`. The initial launcher implementation does not
-execute arbitrary shell commands from KWin. Instead, the manual profile shortcut
-opens the first configured app through Qt's external URL launcher using an
-`applications:` URL, and the normal `windowAdded` path snaps matching windows
-to their profile zones when they appear.
+desktop entry id, window class, and one-based target zone. The KWin script does
+not launch apps directly; app startup is delegated to KDE application shortcuts,
+launchers, or a future external helper. The normal `windowAdded` path snaps
+matching windows to their profile zones when they appear.
 
 Monitor identity uses KWin output names (`output.name`). Geometry does not rely
 on output order or an origin of `x=0, y=0`; snapping uses
