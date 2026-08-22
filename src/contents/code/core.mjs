@@ -85,6 +85,7 @@ export function loadConfig() {
   config.zoneOverlayIndicatorDisplay = KWin.readConfig("zoneOverlayIndicatorDisplay", 0);
   config.enableEdgeSnapping = KWin.readConfig("enableEdgeSnapping", false);
   config.edgeSnappingTriggerDistance = KWin.readConfig("edgeSnappingTriggerDistance", 1);
+  config.mergeTriggerDistance = KWin.readConfig("mergeTriggerDistance", 48);
   config.rememberWindowGeometries = KWin.readConfig("rememberWindowGeometries", true);
   config.trackLayoutPerScreen = KWin.readConfig("trackLayoutPerScreen", false);
   config.monitorLayouts = monitorLayouts;

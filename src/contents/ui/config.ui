@@ -264,6 +264,38 @@
                 </widget>
               </item>
               <item>
+                <widget class="QGroupBox" name="groupBox_mergeTriggerDistance">
+                  <property name="title">
+                    <string>Runtime Merged Zones</string>
+                  </property>
+                  <layout class="QFormLayout" name="formLayout_mergeTriggerDistance">
+                    <item row="0" column="0">
+                      <widget class="QLabel" name="label_mergeTriggerDistance">
+                        <property name="text">
+                          <string>Merge trigger distance (px)</string>
+                        </property>
+                      </widget>
+                    </item>
+                    <item row="0" column="1">
+                      <widget class="QSpinBox" name="kcfg_mergeTriggerDistance">
+                        <property name="minimum">
+                          <number>8</number>
+                        </property>
+                        <property name="maximum">
+                          <number>200</number>
+                        </property>
+                        <property name="singleStep">
+                          <number>4</number>
+                        </property>
+                        <property name="suffix">
+                          <string> px</string>
+                        </property>
+                      </widget>
+                    </item>
+                  </layout>
+                </widget>
+              </item>
+              <item>
                 <widget class="QGroupBox" name="groupBox_snappingBehaviour">
                   <property name="title">
                     <string>Behaviour</string>

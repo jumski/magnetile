@@ -1126,7 +1126,7 @@ Item {
             return null;
 
         const layout = clampLayoutIndex(layoutIndex);
-        const threshold = Math.max(24, (config.layouts[layout].padding || 0) + 18);
+        const threshold = Math.max(8, config.mergeTriggerDistance || 48);
         const baseGeometry = targetGeometry(baseTarget);
         if (!baseGeometry)
             return null;
