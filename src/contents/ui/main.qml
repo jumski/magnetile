@@ -1598,7 +1598,6 @@ Item {
 
         refreshClientAreaForClient(client);
         Utils.log("Moving client " + client.resourceClass.toString() + " to target " + target.id + " with geometry " + JSON.stringify(geometry));
-        moveClientsOverlappingTarget(client, target, geometry);
         if (target.type === "merge" && validZoneIndex(target.layout, client.zone))
             client.magnetileResetZone = client.zone;
 
@@ -1680,43 +1679,6 @@ Item {
         client.magnetileMergedZone = target.type === "merge" ? target.id : "";
         client.magnetileResetZone = target.type === "merge" && validZoneIndex(target.layout, previousResetZone) ? previousResetZone : -1;
         client.magnetileTiled = true;
-    }
-
-    function moveClientsOverlappingTarget(activeClient, target, geometry) {
-        if (!target || target.type !== "merge")
-            return;
-
-        const targetZones = normalizeZoneList(target.layout, target.zones);
-        if (targetZones.length === 0 || !geometry)
-            return;
-
-        const output = target.output || clientOutput(activeClient);
-        for (let i = 0; i < Workspace.stackingOrder.length; i++) {
-            const client = Workspace.stackingOrder[i];
-            if (client === activeClient || !checkFilter(client) || client.minimized)
-                continue;
-
-            if (!clientInCurrentScope(client, output, Workspace.currentDesktop, Workspace.currentActivity))
-                continue;
-
-            const metadataOverlap = zonesOverlap(clientZones(client), targetZones);
-            const geometryOverlap = rectsOverlap(client.frameGeometry, geometry, geometryTolerance);
-            if (client.layout !== target.layout && !geometryOverlap)
-                continue;
-
-            if (!metadataOverlap && !geometryOverlap)
-                continue;
-
-            if (target.type === "merge" && validZoneIndex(target.layout, client.zone))
-                client.magnetileResetZone = client.zone;
-
-            saveClientTargetProperties(client, target);
-            client.magnetileFreeMove = false;
-            client.setMaximize(false, false);
-            client.frameGeometry = geometry;
-            client.magnetileResizeSnapshot = null;
-            saveScopedClientPlacement(client);
-        }
     }
 
     function moveClientToClosestZone(client) {
@@ -2023,6 +1985,7 @@ Item {
     function tiledClientsForResize(client, layout, output, desktop, activity) {
         const clients = [];
         const skipped = [];
+        const activeZones = clientZones(client);
         for (let i = 0; i < Workspace.stackingOrder.length; i++) {
             const window = Workspace.stackingOrder[i];
             if (!checkFilter(window)) {
@@ -2050,6 +2013,12 @@ Item {
 
             if (matchResizeZoneInLayout(window, layout) === -1 || window.layout !== layout) {
                 skipped.push(clientDebugName(window) + ": no layout zone");
+                continue;
+            }
+
+            const windowZones = clientZones(window);
+            if (zonesOverlap(activeZones, windowZones) && !zoneListsEqual(layout, activeZones, windowZones)) {
+                skipped.push(clientDebugName(window) + ": overlapping merge/member target");
                 continue;
             }
 

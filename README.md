@@ -76,9 +76,10 @@ member zone, use a zone shortcut, or snap to the closest zone to select the
 member; drop near the shared edge to select the merged target. Press
 `Ctrl+Alt+R` to clear runtime merges and resized geometry in the current scope.
 
-If another tiled window already occupies one of the zones that becomes part of
-the merge, Magnetile expands that window to the same merged target instead of
-leaving it underneath or marking it floating.
+If another tiled window already occupies one of the source zones, it keeps its
+single-zone geometry and metadata. Only the window dropped on the shared edge
+moves to the merged target. Merge and member windows may overlap by design.
+Connected resize treats those overlapping targets as independent.
 
 Zone highlights and merge previews use a fixed cyan indicator for now so the
 merge state stands apart from theme-derived overlay colors.

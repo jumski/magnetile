@@ -379,8 +379,9 @@ Phase 4: Add multi-zone selection UX.
   user can see when the drop will span multiple zones.
 - Dropping in the middle of a target keeps normal single-zone snapping.
 - Only allow contiguous rectangular selections for the MVP.
-- Existing tiled windows whose occupied zones overlap the new merged target move
-  to the merged target as well, so zone stacks remain coherent after a merge.
+- This fork moves only the dropped window to the merged target. Existing
+  windows in source zones keep their geometry and metadata, so the merge behaves
+  as an independent overlapping target.
 - Zone highlight and merge preview indicators currently use a fixed cyan
   (`#00d5ff`) rather than the Plasma theme accent color. Tune or make this color
   configurable in a future session.
@@ -404,9 +405,12 @@ Phase 6: Revisit connected resize.
 
 Manual tests for this feature should include:
 
-- Merge two adjacent zones by dragging and confirm the overlay shows one target.
-- Try snapping another window into one member zone and confirm it cannot land
-  underneath the merged window.
+- Merge two adjacent zones by dragging and confirm the cyan merge preview.
+- Confirm existing source-zone windows do not move when the merge is created.
+- Snap another window into one member zone and confirm it keeps single-zone
+  geometry underneath the merged window.
+- Resize merge and member windows and confirm neither changes the overlapping
+  target's geometry.
 - Reset with `Ctrl+Alt+R` and confirm original configured zones return.
 - Repeat on a secondary monitor, another virtual desktop, and after switching
   layouts.
