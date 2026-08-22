@@ -3,17 +3,15 @@
 set -eu
 
 SCRIPT_NAME="magnetile-jumski"
-MODE="normal"
 
 usage() {
     cat <<EOF
-Usage: $(basename "$0") [--normal|--restart]
+Usage: $(basename "$0") [--normal]
 
-Build, install, enable, and reload Magnetile in a KDE Wayland session.
+Build, install, enable, and safely reload Magnetile in a KDE Wayland session.
 
 Options:
-  --normal    Package/install with make, then reconfigure and start KWin scripting.
-  --restart   Package/install with make, then restart KWin completely.
+  --normal    Disable/unload, package/install, then reload KWin scripting.
   -h, --help  Show this help.
 EOF
 }
@@ -21,10 +19,10 @@ EOF
 while [ "$#" -gt 0 ]; do
     case "$1" in
         --normal)
-            MODE="normal"
             ;;
         --restart|--full|--kwin-restart)
-            MODE="restart"
+            echo "$(basename "$0"): Refusing an in-session KWin replacement on Wayland; save work and log out/in instead." >&2
+            exit 2
             ;;
         -h|--help)
             usage
@@ -54,7 +52,7 @@ done
 REPO_DIR=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 cd "${REPO_DIR}"
 
-echo "Magnetile clean reload (${MODE})"
+echo "Magnetile safe reload"
 echo "Repository: ${REPO_DIR}"
 echo
 echo "1. Disabling and unloading ${SCRIPT_NAME}..."
@@ -70,26 +68,17 @@ echo
 echo "3. Enabling ${SCRIPT_NAME} in kwinrc..."
 kwriteconfig6 --file kwinrc --group Plugins --key "${SCRIPT_NAME}Enabled" true
 
-if [ "${MODE}" = "restart" ]; then
-    echo
-    echo "4. Restarting KWin. Use this after shortcut declarations or signal handlers change."
-    qdbus6 org.kde.KWin /KWin org.kde.KWin.replace
-    echo
-    echo "KWin restart requested."
-else
-    echo
-    echo "4. Reconfiguring KWin and starting scripting..."
-    qdbus6 org.kde.KWin /KWin reconfigure
-    qdbus6 org.kde.KWin /Scripting org.kde.kwin.Scripting.start
-    echo
-    echo "Normal reload requested."
-fi
+echo
+echo "4. Reconfiguring KWin and starting scripting..."
+qdbus6 org.kde.KWin /KWin reconfigure
+qdbus6 org.kde.KWin /Scripting org.kde.kwin.Scripting.start
 
+echo
+echo "Safe reload requested."
 echo
 echo "Next steps:"
 echo "  - Watch recent logs:"
 echo "      journalctl --user -u plasma-kwin_wayland --since \"1 minute ago\""
 echo "  - Confirm shortcut actions:"
 echo "      qdbus6 org.kde.kglobalaccel /component/kwin org.kde.kglobalaccel.Component.shortcutNames | rg \"Magnetile jumski\""
-echo "  - If shortcuts or signal callbacks still look stale, rerun:"
-echo "      tools/reload-clean.sh --restart"
+echo "  - If KWin process state must be cleared, save work and log out/in."

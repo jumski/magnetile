@@ -219,14 +219,10 @@ For normal QML/config changes, use the clean reload helper:
 tools/reload-clean.sh --normal
 ```
 
-If shortcut declarations or signal handlers changed, or if old development
-loads still appear in KWin logs, restart KWin after installing:
-
-```sh
-tools/reload-clean.sh --restart
-```
-
-The restart path calls `qdbus6 org.kde.KWin /KWin org.kde.KWin.replace`.
+Do not replace KWin inside a live Wayland session. Calling
+`org.kde.KWin.replace` tears down the compositor connection and can crash or
+terminate running applications. If KWin process state must be cleared after a
+script update, save all work and log out, then log back in.
 
 ## Configuration
 
@@ -694,11 +690,8 @@ current script build. A normal reload should be enough for config-only changes:
 tools/reload-clean.sh --normal
 ```
 
-If the overlay was created by an older running QML instance, restart KWin:
-
-```sh
-tools/reload-clean.sh --restart
-```
+If an older QML instance survives the safe reload, save all work and log out,
+then log back in. Do not replace KWin inside the live Wayland session.
 
 While daily driving Magnetile, useful things to note are resize jitter, windows
 that do not follow a resize, duplicated-looking resize participants, apps that

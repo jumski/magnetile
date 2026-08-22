@@ -174,11 +174,8 @@ Reload installed script:
 tools/reload-clean.sh --normal
 ```
 
-Restart KWin if callbacks are stale:
-
-```sh
-tools/reload-clean.sh --restart
-```
+If callbacks remain stale after the safe reload, save all work and log out,
+then log back in. Do not replace KWin inside a live Wayland session.
 
 ## Recommended Next Steps
 

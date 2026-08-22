@@ -49,13 +49,6 @@ disable:
 	@qdbus6 org.kde.KWin /Scripting org.kde.kwin.Scripting.unloadScript $(SCRIPT_NAME) >/dev/null 2>&1 || true
 	@qdbus6 org.kde.KWin /KWin reconfigure
 
-restart-kwin:
-	if [ "$$XDG_SESSION_TYPE" = "wayland" ]; then \
-		kwin_wayland --replace & \
-	else \
-		echo "Magnetile supports Wayland sessions only"; \
-	fi
-
 logs:
 	@journalctl --user -u plasma-kwin_wayland -f QT_CATEGORY=js QT_CATEGORY=qml QT_CATEGORY=kwin_scripting;
 
@@ -95,7 +88,6 @@ help:
 	@echo "  clean          - Remove the packaged .kwinscript file"
 	@echo "  enable         - Enable the script in KWin"
 	@echo "  disable        - Disable the script in KWin"
-	@echo "  restart-kwin   - Restart KWin to apply changes"
 	@echo "  logs           - View KWin logs for debugging"
 	@echo "  start-session  - Start a nested Wayland session for testing"
 	@echo "  load           - Load the script for testing"

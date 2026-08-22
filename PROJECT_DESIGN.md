@@ -442,8 +442,9 @@ position and selected window. Resize diagnostics group participants by zone so
 stacked windows are visible while testing.
 
 KDE keeps old bindings in `~/.config/kglobalshortcutsrc`. If shortcut defaults change, existing installs may need live KGlobalAccel updates or manual changes in System Settings.
-Shortcut declaration changes and old dev-loaded signal handlers may require a
-full KWin restart with `qdbus6 org.kde.KWin /KWin org.kde.KWin.replace`.
+Do not replace KWin inside a live Wayland session. It tears down the compositor
+connection and can terminate clients. If shortcut declarations or stale
+handlers require a fresh KWin process, save work and log out, then log back in.
 
 ## Free Movement
 
@@ -487,18 +488,10 @@ restart KWin scripting with:
 tools/reload-clean.sh --normal
 ```
 
-Use the full restart path when shortcut declarations changed, when signal
-handler lifecycle changed, or when logs still mention stale development load
-paths such as temporary `src.XXXXXX` directories:
-
-```sh
-tools/reload-clean.sh --restart
-```
-
-The full restart path packages and installs with `make`, enables Magnetile in
-`kwinrc`, then calls `qdbus6 org.kde.KWin /KWin org.kde.KWin.replace`. This is
-expected to be necessary for KGlobalAccel shortcut declaration changes and for
-clearing old QML closures left by temporary development loads.
+If shortcut declarations, signal-handler lifecycle changes, or stale temporary
+`src.XXXXXX` loads require a fresh KWin process, save all work and log out, then
+log back in. Never call `org.kde.KWin.replace` inside a live Wayland session; it
+tears down the compositor connection and can crash running clients.
 
 The `Meta+Shift+S` screenshot-region bug from April 2026 was caused by
 `autoSnapAllNew` snapping KWin's Spectacle capture client
