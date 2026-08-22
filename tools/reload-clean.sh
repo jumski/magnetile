@@ -57,22 +57,28 @@ cd "${REPO_DIR}"
 echo "Magnetile clean reload (${MODE})"
 echo "Repository: ${REPO_DIR}"
 echo
-echo "1. Packaging and installing with make..."
+echo "1. Disabling and unloading ${SCRIPT_NAME}..."
+kwriteconfig6 --file kwinrc --group Plugins --key "${SCRIPT_NAME}Enabled" false
+qdbus6 org.kde.KWin /Scripting org.kde.kwin.Scripting.unloadScript "${SCRIPT_NAME}" >/dev/null 2>&1 || true
+qdbus6 org.kde.KWin /KWin reconfigure
+
+echo
+echo "2. Packaging and installing with make..."
 make
 
 echo
-echo "2. Enabling ${SCRIPT_NAME} in kwinrc..."
+echo "3. Enabling ${SCRIPT_NAME} in kwinrc..."
 kwriteconfig6 --file kwinrc --group Plugins --key "${SCRIPT_NAME}Enabled" true
 
 if [ "${MODE}" = "restart" ]; then
     echo
-    echo "3. Restarting KWin. Use this after shortcut declarations or signal handlers change."
+    echo "4. Restarting KWin. Use this after shortcut declarations or signal handlers change."
     qdbus6 org.kde.KWin /KWin org.kde.KWin.replace
     echo
     echo "KWin restart requested."
 else
     echo
-    echo "3. Reconfiguring KWin and starting scripting..."
+    echo "4. Reconfiguring KWin and starting scripting..."
     qdbus6 org.kde.KWin /KWin reconfigure
     qdbus6 org.kde.KWin /Scripting org.kde.kwin.Scripting.start
     echo

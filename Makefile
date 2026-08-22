@@ -44,8 +44,9 @@ enable:
 	@qdbus6 org.kde.KWin /KWin reconfigure
 
 disable:
-	@echo "Disabling $(SCRIPT_NAME)..."
+	@echo "Disabling and unloading $(SCRIPT_NAME)..."
 	@kwriteconfig6 --file kwinrc --group Plugins --key $(SCRIPT_NAME)Enabled false
+	@qdbus6 org.kde.KWin /Scripting org.kde.kwin.Scripting.unloadScript $(SCRIPT_NAME) >/dev/null 2>&1 || true
 	@qdbus6 org.kde.KWin /KWin reconfigure
 
 restart-kwin:
