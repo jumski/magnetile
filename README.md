@@ -13,6 +13,13 @@ Magnetile keeps a FancyZones-style zone workflow and extends it for a
 Wayland-only KDE Plasma 6 setup with connected resizing, stronger multi-monitor
 behavior, and a visual layout editor helper.
 
+> [!NOTE]
+> This fork installs as **Magnetile jumski** with package id
+> `magnetile-jumski`, alongside upstream Magnetile. It keeps merged-zone member
+> zones selectable: drop in a member zone to use that zone, or drop near its
+> shared edge to use the merged target. Never enable this fork and upstream
+> Magnetile at the same time; both would handle the same KWin events.
+
 ## Visual Layout Editor
 
 Use the hosted editor to create and tune layouts without writing JSON by hand:
@@ -64,8 +71,10 @@ drop position will span multiple zones. Dropping in the middle of a zone keeps
 normal single-zone snapping.
 
 Runtime merges are scoped to the current output, desktop, activity, and layout.
-The original member zones stop acting as independent snap targets until the
-current layout is reset with `Ctrl+Alt+R`.
+Member zones remain independent snap targets while a merge exists. Drop in a
+member zone, use a zone shortcut, or snap to the closest zone to select the
+member; drop near the shared edge to select the merged target. Press
+`Ctrl+Alt+R` to clear runtime merges and resized geometry in the current scope.
 
 If another tiled window already occupies one of the zones that becomes part of
 the merge, Magnetile expands that window to the same merged target instead of
@@ -77,10 +86,10 @@ merge state stands apart from theme-derived overlay colors.
 ### Troubleshooting Runtime State
 
 When testing from a source checkout, keep only one Magnetile instance enabled.
-Running an installed `magnetile` package and a live `magnetile-test` script at
-the same time can make both instances react to the same move or resize, causing
-padding loss or stale zone state. Disable the packaged instance before using
-`make reload` for source testing.
+Running upstream `magnetile`, installed `magnetile-jumski`, or live
+`magnetile-jumski-test` together can make multiple instances react to the same
+move or resize, causing padding loss, stale zone state, or a KWin freeze.
+Disable every other instance before enabling or loading one for testing.
 
 #### Free Movement
 
@@ -186,10 +195,10 @@ Overlay and selector colors follow the active Plasma color scheme.
 Clone and install locally:
 
 ```sh
-git clone https://github.com/jcearnal/magnetile.git
+git clone https://github.com/jumski/magnetile.git
 cd magnetile
 make
-kwriteconfig6 --file kwinrc --group Plugins --key magnetileEnabled true
+kwriteconfig6 --file kwinrc --group Plugins --key magnetile-jumskiEnabled true
 qdbus6 org.kde.KWin /KWin reconfigure
 qdbus6 org.kde.KWin /Scripting org.kde.kwin.Scripting.start
 ```
@@ -198,8 +207,9 @@ After installing, open:
 
 `System Settings / Window Management / KWin Scripts`
 
-Enable **Magnetile** if it is not already enabled. Open Magnetile's settings
-with the gear button next to the script entry.
+Enable **Magnetile jumski** if it is not already enabled. Open its settings
+with the gear button next to the script entry. Keep upstream **Magnetile**
+disabled.
 
 When updating an existing install, KWin may keep an older script instance alive.
 For normal QML/config changes, use the clean reload helper:
@@ -221,7 +231,7 @@ The restart path calls `qdbus6 org.kde.KWin /KWin org.kde.KWin.replace`.
 
 Open the settings from:
 
-`System Settings / Window Management / KWin Scripts / Magnetile / ⚙️`
+`System Settings / Window Management / KWin Scripts / Magnetile jumski / ⚙️`
 
 ### General
 
@@ -313,7 +323,7 @@ KWin settings directly.
 To use it:
 
 1. Open Magnetile settings from `System Settings / Window Management / KWin
-   Scripts / Magnetile / ⚙️`.
+   Scripts / Magnetile jumski / ⚙️`.
 2. Go to the **Layouts** tab.
 3. Copy the full JSON from the layout text box.
 4. Open [the visual layout editor](https://jcearnal.github.io/magnetile/).
@@ -725,7 +735,7 @@ Install the "Geometry change" KWin effect to animate window movements: https://s
 Replace the last part with any shortcut from the list above:
 
 ```sh
-qdbus6 org.kde.kglobalaccel /component/kwin invokeShortcut "Magnetile: Cycle layouts"
+qdbus6 org.kde.kglobalaccel /component/kwin invokeShortcut "Magnetile jumski: Cycle layouts"
 ```
 
 ### Clean corrupted shortcuts

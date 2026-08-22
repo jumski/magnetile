@@ -1739,6 +1739,9 @@ Item {
         let closestDistance = Infinity;
         for (let i = 0; i < targets.length; i++) {
             const target = targets[i];
+            if (target.type !== "zone")
+                continue;
+
             const geometry = targetGeometry(target);
             if (!geometry)
                 continue;

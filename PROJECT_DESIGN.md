@@ -268,11 +268,11 @@ rectangle. A multi-zone snap should temporarily mutate the effective layout for
 the active output, desktop, activity, and layout until `Ctrl+Alt+R` resets that
 runtime state.
 
-The core rule is that once zones are merged, their member zones stop being
-independent snap targets. For example, if zones 1 and 2 are merged for a window,
-the overlay should show one combined target and another window should not be
-able to snap into only zone 1 underneath it. This prevents overlapping tiled
-state and keeps the preview consistent with the actual snap behavior.
+Upstream Magnetile's core rule is that once zones are merged, their member
+zones stop being independent snap targets. This fork intentionally differs:
+member zones remain effective targets and win normal hover, shortcut, edge, and
+closest-zone selection. The merged target remains available through the shared-
+edge drop gesture. This allows overlapping tiled state by design.
 
 Keep configured layout JSON immutable. The effective runtime layout should be:
 
