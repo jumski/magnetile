@@ -1041,12 +1041,16 @@ Item {
 
     function effectiveTargetForZone(layoutIndex, zoneIndex, screen, desktop, activity) {
         const targets = effectiveZoneTargets(layoutIndex, screen, desktop, activity);
+        let containing = null;
         for (let i = 0; i < targets.length; i++) {
-            if (targetContainsZone(targets[i], zoneIndex))
+            if (targets[i].type === "zone" && targets[i].zone === zoneIndex)
                 return targets[i];
 
+            if (targetContainsZone(targets[i], zoneIndex))
+                containing = containing || targets[i];
+
         }
-        return singleZoneTarget(layoutIndex, zoneIndex, screen, desktop, activity);
+        return containing || singleZoneTarget(layoutIndex, zoneIndex, screen, desktop, activity);
     }
 
     function mergeTargetFromZones(layoutIndex, zones, screen, desktop, activity) {
@@ -1182,7 +1186,6 @@ Item {
         const resolvedScreen = screen || activeScreen || Workspace.activeScreen;
         const resolvedDesktop = desktop || Workspace.currentDesktop;
         const resolvedActivity = activity !== undefined && activity !== null ? activity : Workspace.currentActivity;
-        const hiddenZones = {};
         const targets = [];
         const merges = activeMergedZones(layout, resolvedScreen, resolvedDesktop, resolvedActivity);
 
@@ -1198,9 +1201,6 @@ Item {
 
             const anchor = zones[0];
             const anchorZone = configuredZoneForTarget(layout, anchor);
-            for (let zoneIndex = 0; zoneIndex < zones.length; zoneIndex++)
-                hiddenZones[zones[zoneIndex]] = true;
-
             targets.push({
                 "type": "merge",
                 "id": merge.id || mergeIdForZones(zones),
@@ -1218,9 +1218,8 @@ Item {
 
         const zones = config.layouts[layout].zones;
         for (let i = 0; i < zones.length; i++) {
-            if (hiddenZones[i])
-                continue;
-
+            // Member zones of active merges stay selectable; hover picks the
+            // smaller target, so the merge is chosen via the border gesture.
             const geometry = zoneGeometry(layout, i, resolvedScreen);
             targets.push({
                 "type": "zone",

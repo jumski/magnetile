@@ -24,6 +24,9 @@ Item {
             id: zone
 
             property int zoneIndex: modelData.zone
+            // Merge cards are invisible; the border-drop gesture previews the
+            // merged rect via the mergePreview component instead.
+            visible: modelData.type !== "merge"
             property int zonePadding: config.layouts[layoutIndex].padding || 0
             property var sourceZone: config.layouts[layoutIndex].zones[zoneIndex] || {}
             property var renderZones: config.zoneOverlayIndicatorDisplay == 1 ? [sourceZone] : config.layouts[layoutIndex].zones
