@@ -23,8 +23,8 @@ Item {
     signal resetCurrentLayout()
 
     ShortcutHandler {
-        name: "Magnetile: Cycle layouts"
-        text: "Magnetile: Cycle layouts"
+        name: "Magnetile jumski: Cycle layouts"
+        text: "Magnetile jumski: Cycle layouts"
         sequence: "Ctrl+Alt+D"
         onActivated: {
             cycleLayouts();
@@ -32,8 +32,8 @@ Item {
     }
 
     ShortcutHandler {
-        name: "Magnetile: Cycle layouts (reversed)"
-        text: "Magnetile: Cycle layouts (reversed)"
+        name: "Magnetile jumski: Cycle layouts (reversed)"
+        text: "Magnetile jumski: Cycle layouts (reversed)"
         sequence: "Ctrl+Alt+Shift+D"
         onActivated: {
             cycleLayoutsReversed();
@@ -41,8 +41,8 @@ Item {
     }
 
     ShortcutHandler {
-        name: "Magnetile: Move active window to next zone"
-        text: "Magnetile: Move active window to next zone"
+        name: "Magnetile jumski: Move active window to next zone"
+        text: "Magnetile jumski: Move active window to next zone"
         sequence: "Ctrl+Alt+Right"
         onActivated: {
             moveActiveWindowToNextZone();
@@ -50,8 +50,8 @@ Item {
     }
 
     ShortcutHandler {
-        name: "Magnetile: Move active window to previous zone"
-        text: "Magnetile: Move active window to previous zone"
+        name: "Magnetile jumski: Move active window to previous zone"
+        text: "Magnetile jumski: Move active window to previous zone"
         sequence: "Ctrl+Alt+Left"
         onActivated: {
             moveActiveWindowToPreviousZone();
@@ -59,8 +59,8 @@ Item {
     }
 
     ShortcutHandler {
-        name: "Magnetile: Toggle zone overlay"
-        text: "Magnetile: Toggle zone overlay"
+        name: "Magnetile jumski: Toggle zone overlay"
+        text: "Magnetile jumski: Toggle zone overlay"
         sequence: "Ctrl+Alt+C"
         onActivated: {
             toggleZoneOverlay();
@@ -68,8 +68,8 @@ Item {
     }
 
     ShortcutHandler {
-        name: "Magnetile: Switch to next window in current zone"
-        text: "Magnetile: Switch to next window in current zone"
+        name: "Magnetile jumski: Switch to next window in current zone"
+        text: "Magnetile jumski: Switch to next window in current zone"
         sequence: "Ctrl+Alt+Up"
         onActivated: {
             switchToNextWindowInCurrentZone();
@@ -77,8 +77,8 @@ Item {
     }
 
     ShortcutHandler {
-        name: "Magnetile: Switch to previous window in current zone"
-        text: "Magnetile: Switch to previous window in current zone"
+        name: "Magnetile jumski: Switch to previous window in current zone"
+        text: "Magnetile jumski: Switch to previous window in current zone"
         sequence: "Ctrl+Alt+Down"
         onActivated: {
             switchToPreviousWindowInCurrentZone();
@@ -90,8 +90,8 @@ Item {
 
         delegate: Item {
             ShortcutHandler {
-                name: "Magnetile: Move active window to zone " + modelData
-                text: "Magnetile: Move active window to zone " + modelData
+                name: "Magnetile jumski: Move active window to zone " + modelData
+                text: "Magnetile jumski: Move active window to zone " + modelData
                 sequence: "Ctrl+Alt+" + modelData
                 onActivated: {
                     moveActiveWindowToZone(modelData - 1);
@@ -107,8 +107,8 @@ Item {
 
         delegate: Item {
             ShortcutHandler {
-                name: "Magnetile: Activate layout " + modelData
-                text: "Magnetile: Activate layout " + modelData
+                name: "Magnetile jumski: Activate layout " + modelData
+                text: "Magnetile jumski: Activate layout " + modelData
                 sequence: "Ctrl+Alt+Shift+" + modelData
                 onActivated: {
                     activateLayout(modelData - 1);
@@ -116,8 +116,8 @@ Item {
             }
 
             ShortcutHandler {
-                name: "Magnetile: Activate layout " + modelData + " (shifted key)"
-                text: "Magnetile: Activate layout " + modelData + " (shifted key)"
+                name: "Magnetile jumski: Activate layout " + modelData + " (shifted key)"
+                text: "Magnetile jumski: Activate layout " + modelData + " (shifted key)"
                 sequence: "Ctrl+Alt+" + shiftedNumberKeys[modelData - 1]
                 onActivated: {
                     activateLayout(modelData - 1);
@@ -129,8 +129,8 @@ Item {
     }
 
     ShortcutHandler {
-        name: "Magnetile: Move active window up"
-        text: "Magnetile: Move active window up"
+        name: "Magnetile jumski: Move active window up"
+        text: "Magnetile jumski: Move active window up"
         sequence: "Meta+Up"
         onActivated: {
             moveActiveWindowUp();
@@ -138,8 +138,8 @@ Item {
     }
 
     ShortcutHandler {
-        name: "Magnetile: Move active window down"
-        text: "Magnetile: Move active window down"
+        name: "Magnetile jumski: Move active window down"
+        text: "Magnetile jumski: Move active window down"
         sequence: "Meta+Down"
         onActivated: {
             moveActiveWindowDown();
@@ -147,8 +147,8 @@ Item {
     }
 
     ShortcutHandler {
-        name: "Magnetile: Move active window left"
-        text: "Magnetile: Move active window left"
+        name: "Magnetile jumski: Move active window left"
+        text: "Magnetile jumski: Move active window left"
         sequence: "Meta+Left"
         onActivated: {
             moveActiveWindowLeft();
@@ -156,8 +156,8 @@ Item {
     }
 
     ShortcutHandler {
-        name: "Magnetile: Move active window right"
-        text: "Magnetile: Move active window right"
+        name: "Magnetile jumski: Move active window right"
+        text: "Magnetile jumski: Move active window right"
         sequence: "Meta+Right"
         onActivated: {
             moveActiveWindowRight();
@@ -165,8 +165,8 @@ Item {
     }
 
     ShortcutHandler {
-        name: "Magnetile: Snap active window"
-        text: "Magnetile: Snap active window"
+        name: "Magnetile jumski: Snap active window"
+        text: "Magnetile jumski: Snap active window"
         sequence: "Meta+Shift+Space"
         onActivated: {
             snapActiveWindow();
@@ -174,8 +174,8 @@ Item {
     }
 
     ShortcutHandler {
-        name: "Magnetile: Snap all windows"
-        text: "Magnetile: Snap all windows"
+        name: "Magnetile jumski: Snap all windows"
+        text: "Magnetile jumski: Snap all windows"
         sequence: "Meta+Space"
         onActivated: {
             snapAllWindows();
@@ -183,8 +183,8 @@ Item {
     }
 
     ShortcutHandler {
-        name: "Magnetile: Free active window"
-        text: "Magnetile: Free active window"
+        name: "Magnetile jumski: Free active window"
+        text: "Magnetile jumski: Free active window"
         sequence: "Ctrl+Alt+F"
         onActivated: {
             freeActiveWindow();
@@ -192,8 +192,8 @@ Item {
     }
 
     ShortcutHandler {
-        name: "Magnetile: Reset current layout"
-        text: "Magnetile: Reset current layout"
+        name: "Magnetile jumski: Reset current layout"
+        text: "Magnetile jumski: Reset current layout"
         sequence: "Ctrl+Alt+R"
         onActivated: {
             resetCurrentLayout();

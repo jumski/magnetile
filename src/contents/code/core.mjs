@@ -4,22 +4,22 @@ export let QML = {};
 export let config = {};
 
 export function init(kwin, workspace) {
-  console.log("Magnetile: Loading APIs...");
+  console.log("Magnetile jumski: Loading APIs...");
   KWin = kwin || null;
   Workspace = workspace || null;
 }
 
 export function registerQMLComponent(name, component) {
-  console.log("Magnetile: Registering QML component:", name);
+  console.log("Magnetile jumski: Registering QML component:", name);
   try {
     QML[name] = component;
   } catch (error) {
-    console.error("Magnetile: Error registering QML component:", error);
+    console.error("Magnetile jumski: Error registering QML component:", error);
   }
 }
 
 export function loadConfig() {
-  console.log("Magnetile: Loading config...");
+  console.log("Magnetile jumski: Loading config...");
 
   const defaultLayouts = [
     {
@@ -103,5 +103,5 @@ export function loadConfig() {
 
   QML.root.config = config;
 
-  console.log("Magnetile: Config loaded:", JSON.stringify(config));
+  console.log("Magnetile jumski: Config loaded:", JSON.stringify(config));
 }

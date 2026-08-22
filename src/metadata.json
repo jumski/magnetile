@@ -10,20 +10,20 @@
             }
         ],
         "Category": "Utilities",
-        "Description": "Utility for snapping windows into zones with connected tile resizing",
+        "Description": "Snapping windows into zones with connected tile resizing (jumski fork: member zones stay selectable while merged)",
         "EnabledByDefault": false,
         "Icon": "preferences-desktop-virtual",
-        "Id": "magnetile",
+        "Id": "magnetile-jumski",
         "License": "GPL-3.0",
-        "Name": "Magnetile",
+        "Name": "Magnetile jumski",
         "ServiceTypes": [
             "KWin/Script"
         ],
         "Version": "0.3.0",
-        "Website": "https://github.com/jcearnal/magnetile.git"
+        "Website": "https://github.com/jumski/magnetile"
     },
     "X-KDE-ConfigModule": "kwin/effects/configs/kcm_kwin4_genericscripted",
-    "X-KDE-PluginKeyword": "magnetile",
+    "X-KDE-PluginKeyword": "magnetile-jumski",
     "X-Plasma-API": "declarativescript",
     "X-Plasma-API-Minimum-Version": "6.4",
     "X-Plasma-APIX": "javascript",

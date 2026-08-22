@@ -2,7 +2,7 @@ import { Workspace, config, QML } from "./core.mjs";
 
 export function log(message, level = "info") {
   if (!config.enableDebugLogging) return;
-  console.log(`[${level}] Magnetile: ${message}`);
+  console.log(`[${level}] Magnetile jumski: ${message}`);
 }
 
 export function osd(text, icon = "preferences-desktop-virtual") {

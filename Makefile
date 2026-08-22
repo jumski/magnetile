@@ -1,4 +1,4 @@
-SCRIPT_NAME := magnetile
+SCRIPT_NAME := magnetile-jumski
 PKGFILE := $(SCRIPT_NAME).kwinscript
 SRC_DIR := src
 SESSION_WIDTH := 1920

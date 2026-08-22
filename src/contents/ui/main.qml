@@ -2698,7 +2698,7 @@ Item {
     PlasmaCore.Dialog {
         id: debugDialog
 
-        title: "Magnetile Debug"
+        title: "Magnetile jumski Debug"
         location: PlasmaCore.Types.Desktop
         type: PlasmaCore.Dialog.OnScreenDisplay
         backgroundHints: PlasmaCore.Types.NoBackground
@@ -2742,7 +2742,7 @@ Item {
             showZoneOverlay = config.zoneOverlayShowWhen == 0;
         }
 
-        title: "Magnetile Overlay"
+        title: "Magnetile jumski Overlay"
         location: PlasmaCore.Types.Desktop
         type: PlasmaCore.Dialog.OnScreenDisplay
         backgroundHints: PlasmaCore.Types.NoBackground

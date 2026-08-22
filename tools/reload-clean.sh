@@ -2,7 +2,7 @@
 
 set -eu
 
-SCRIPT_NAME="magnetile"
+SCRIPT_NAME="magnetile-jumski"
 MODE="normal"
 
 usage() {
@@ -84,6 +84,6 @@ echo "Next steps:"
 echo "  - Watch recent logs:"
 echo "      journalctl --user -u plasma-kwin_wayland --since \"1 minute ago\""
 echo "  - Confirm shortcut actions:"
-echo "      qdbus6 org.kde.kglobalaccel /component/kwin org.kde.kglobalaccel.Component.shortcutNames | rg \"Magnetile\""
+echo "      qdbus6 org.kde.kglobalaccel /component/kwin org.kde.kglobalaccel.Component.shortcutNames | rg \"Magnetile jumski\""
 echo "  - If shortcuts or signal callbacks still look stale, rerun:"
 echo "      tools/reload-clean.sh --restart"
