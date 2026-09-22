@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Connected resize no longer resizes same-band zones on the opposite side of
+  a full-height center tile: band-follow now requires the sibling to connect to
+  the resized zone through touching band members (`connectedBandIndices`),
+  fixing layouts like center + satellites where dragging the left column's
+  horizontal divider resized the bottom-right tile.
+
 ## [0.3.0] - 2026-05-23
 
 ### Added

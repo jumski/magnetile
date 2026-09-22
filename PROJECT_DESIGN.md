@@ -235,7 +235,12 @@ Flow:
    stay connected to stacked half-height zones across their shared logical edge.
 9. Stacked or side-by-side sibling zones that share the same logical outer edge
    follow that edge together, so accidentally grabbing one half of a split stack
-   still keeps the other half aligned.
+   still keeps the other half aligned. Band siblings must also connect to the
+   resized zone through band members that touch or overlap (padding gaps
+   count); `connectedBandIndices` in `utils.mjs` computes this. Zones in the
+   same row/column band that are separated by non-band zones do not follow:
+   resizing the left half of a center-plus-satellites layout must not resize
+   the right satellites.
 10. `Ctrl+Alt+R` clears the current layout's resized runtime geometry for the
    active output, desktop, and activity, then moves windows in that layout back
    to their configured zone geometry. If a window's dynamic layout/zone state is

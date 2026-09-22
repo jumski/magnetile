@@ -2147,6 +2147,9 @@ Item {
 
         clearRuntimeLayoutGeometry(layoutIndex, snapshot.output, snapshot.desktop, snapshot.activity);
 
+        const columnBand = Utils.connectedBandIndices(snapshot.zoneGeometries, oldTargetGeometry, false, resizeTolerance);
+        const rowBand = Utils.connectedBandIndices(snapshot.zoneGeometries, oldTargetGeometry, true, resizeTolerance);
+
         for (let i = 0; i < zones.length; i++) {
             const oldZoneGeometry = snapshot.zoneGeometries[i];
             if (!oldZoneGeometry)
@@ -2197,8 +2200,8 @@ Item {
             const leftAdjacent = isResizeAdjacent(leftGap, resizeTolerance) && overlapsY;
             const bottomAdjacent = isResizeAdjacent(bottomGap, resizeTolerance) && overlapsX;
             const topAdjacent = isResizeAdjacent(topGap, resizeTolerance) && overlapsX;
-            const sameColumn = edgesAligned(oldZone.left, oldTarget.left) && edgesAligned(oldZone.right, oldTarget.right);
-            const sameRow = edgesAligned(oldZone.top, oldTarget.top) && edgesAligned(oldZone.bottom, oldTarget.bottom);
+            const sameColumn = columnBand[i] === true;
+            const sameRow = rowBand[i] === true;
 
             if (changed.right && rightAdjacent)
                 nextLeft = newTarget.right + preservedResizeGap(rightGap, resizeLayout);
@@ -2326,6 +2329,13 @@ Item {
             }
         }
 
+        const seedLogicalGeometry = snapshot.logicalGeometry || snapshot.geometry;
+        const windowLogicalRects = snapshot.windows.map(function(item) {
+            return item.logicalGeometry || item.geometry;
+        });
+        const columnBand = Utils.connectedBandIndices(windowLogicalRects, seedLogicalGeometry, false, resizeTolerance);
+        const rowBand = Utils.connectedBandIndices(windowLogicalRects, seedLogicalGeometry, true, resizeTolerance);
+
         for (let i = 0; i < snapshot.windows.length; i++) {
             const item = snapshot.windows[i];
             const window = item.client;
@@ -2367,8 +2377,8 @@ Item {
             const leftAdjacent = (isResizeAdjacent(leftGap, resizeTolerance) && overlapsOldY) || (isResizeAdjacent(logicalLeftGap, resizeTolerance) && overlapsLogicalY);
             const bottomAdjacent = (isResizeAdjacent(bottomGap, resizeTolerance) && overlapsOldX) || (isResizeAdjacent(logicalBottomGap, resizeTolerance) && overlapsLogicalX);
             const topAdjacent = (isResizeAdjacent(topGap, resizeTolerance) && overlapsOldX) || (isResizeAdjacent(logicalTopGap, resizeTolerance) && overlapsLogicalX);
-            const sameLogicalColumn = edgesAligned(oldOtherLogical.left, oldLogicalGeometry.left) && edgesAligned(oldOtherLogical.right, oldLogicalGeometry.right);
-            const sameLogicalRow = edgesAligned(oldOtherLogical.top, oldLogicalGeometry.top) && edgesAligned(oldOtherLogical.bottom, oldLogicalGeometry.bottom);
+            const sameLogicalColumn = columnBand[i] === true;
+            const sameLogicalRow = rowBand[i] === true;
             const preservedRightGap = isResizeAdjacent(rightGap, resizeTolerance) && overlapsOldY ? preservedResizeGap(rightGap, resizeLayout) : preservedResizeGap(logicalRightGap, resizeLayout);
             const preservedLeftGap = isResizeAdjacent(leftGap, resizeTolerance) && overlapsOldY ? preservedResizeGap(leftGap, resizeLayout) : preservedResizeGap(logicalLeftGap, resizeLayout);
             const preservedBottomGap = isResizeAdjacent(bottomGap, resizeTolerance) && overlapsOldX ? preservedResizeGap(bottomGap, resizeLayout) : preservedResizeGap(logicalBottomGap, resizeLayout);
