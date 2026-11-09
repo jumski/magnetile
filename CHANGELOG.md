@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
+### Added
+- `filterList` accepts `title:<substring>` entries matched against the window
+  caption, so same-application windows (for example the Firefox Bitwarden
+  extension popup, caption "Rozszerzenie: (Menedżer haseł Bitwarden) - Bitwarden
+  — Mozilla Firefox") can be excluded from tiling while the main window stays
+  managed. Bare entries keep exact resourceClass matching; an empty
+  `title:` entry never matches, guarding against blacklisting everything.
+
 ### Fixed
 - Zone rectangle validation (`zonesFormRectangle`) tolerates the per-seam area
   error left by two-decimal zone coordinates, so merged multi-zone sets are no

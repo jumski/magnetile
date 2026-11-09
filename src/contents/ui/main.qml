@@ -1977,14 +1977,24 @@ Item {
         if (client.skipTaskbar)
             return false;
 
-        // read filter from config and check if the client's resource class matches the filter
+        // read filter from config and check if the client's resource class matches.
+        // "title:<substring>" entries match against the window caption instead,
+        // so same-class windows (e.g. firefox extension popups) can be filtered
+        // by their title.
         const filter = config.filterList.split(/\r?\n/);
         if (config.filterList.length > 0) {
+            const matched = filter.some((entry) => {
+                if (entry.startsWith("title:")) {
+                    const needle = entry.slice(6);
+                    return needle.length > 0 && client.caption !== undefined && client.caption.toString().includes(needle);
+                }
+                return entry === clientResourceClass(client);
+            });
             if (config.filterMode == 0)
-                return filter.includes(clientResourceClass(client));
+                return matched;
 
             if (config.filterMode == 1)
-                return !filter.includes(clientResourceClass(client));
+                return !matched;
 
         }
         return true;
