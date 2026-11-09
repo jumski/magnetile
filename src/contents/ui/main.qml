@@ -3087,7 +3087,6 @@ Item {
             if (layout <= config.layouts.length - 1) {
                 setCurrentLayout(layout);
                 highlightedZone = -1;
-                Utils.osd(osdLayoutSelection());
             } else {
                 Utils.osd(`Layout ${layout + 1} does not exist`);
             }

@@ -17,6 +17,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `title:` entry never matches, guarding against blacklisting everything.
 
 ### Fixed
+- "Activate layout N" no longer shows the layout-name OSD: the shortcut is
+  mostly triggered by automation (focus-coding activates the notes layout on
+  activity switch), so the center-screen popup fired on every switch.
+  Layout next/previous shortcuts keep their OSD feedback.
 - Zone rectangle validation (`zonesFormRectangle`) tolerates the per-seam area
   error left by two-decimal zone coordinates, so merged multi-zone sets are no
   longer rejected for sub-percent seam overlap.
