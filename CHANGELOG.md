@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
+- Zone rectangle validation (`zonesFormRectangle`) tolerates the per-seam area
+  error left by two-decimal zone coordinates, so merged multi-zone sets are no
+  longer rejected for sub-percent seam overlap.
 - Connected resize no longer resizes same-band zones on the opposite side of
   a full-height center tile: band-follow now requires the sibling to connect to
   the resized zone through touching band members (`connectedBandIndices`),

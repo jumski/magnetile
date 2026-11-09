@@ -774,7 +774,10 @@ Item {
         }
 
         const unionArea = (right - left) * (bottom - top);
-        return Math.abs(unionArea - totalArea) <= 0.01;
+        // Coordinates rounded to two decimals can leave 0.01% seams. Convert
+        // that linear tolerance to area units and allow for multiple seams.
+        const areaTolerance = 0.01 * Math.max(right - left, bottom - top) * normalized.length;
+        return Math.abs(unionArea - totalArea) <= areaTolerance;
     }
 
     function zonesUnionGeometry(layoutIndex, zones, screen) {
