@@ -1803,6 +1803,11 @@ Item {
             if (client.move)
                 continue;
 
+            // Snap only the current desktop/activity scope; windows on other
+            // activities keep their geometry (and placements) untouched.
+            if (!clientInCurrentScope(client, clientOutput(client), Workspace.currentDesktop, Workspace.currentActivity))
+                continue;
+
             moveClientToClosestZone(client) && count++;
         }
         Utils.log("Moved " + count + " clients to closest zone");
